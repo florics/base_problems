@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=copt_run_for_ECOS
+#SBATCH --job-name=mthesis_base_problem_copt
 #output paths have to adjusted to your folders
 #SBATCH --output=/scratch/htc/lmehl/master_thesis/base_problems/copt/results/job_out/sbatch_job_%A.out
 #SBATCH --error=/scratch/htc/lmehl/master_thesis/base_problems/copt/results/job_out/sbatch_job_%A.err

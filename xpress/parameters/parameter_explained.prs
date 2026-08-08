@@ -1,0 +1,30 @@
+OUTPUTLOG = 1
+THREADS = 32
+
+LPFLAGS:
+Bit - Meaning
+0 - Use the dual simplex method.
+1 - Use the primal simplex method.
+2 - Use the barrier method (or hybrid gradient method if BARALG=4 or BARALG=5 is set).
+3 - Use the network simplex method. 
+! note that it is not integer-, but bit-valued
+
+# determine which barrier algorithm is used 
+BARALG = -1 
+# -1 = "Determine automatically."
+
+CROSSOVER = -1
+
+# tolerances for barrier with default values
+BARPRIMALSTOP = 0
+BARDUALSTOP = 0
+BARGAPSTOP = 0
+BARGAPTARGET = 0
+
+#tolerances for simplex, crossover with default values
+FEASTOL = 1.e-6
+OPTIMALITYTOL = 1.e-6
+
+# limits 
+TIMELIMIT = 86400
+MAXMEMORYHARD = 512000

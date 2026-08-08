@@ -1,0 +1,12 @@
+solver=hipo,simplex
+simplex_strategy: 0 => Choose; 1 => Dual (serial); 2 => Dual (SIP); 3 => Dual (PAMI); 4 => Primal
+run_crossover=off/on
+
+threads=8,16,32
+
+simplex tolerances: primal_feasibility_tolerance, dual_feasibility_tolerance
+    default: 1e-07
+hipo tolerances: optimality_tolerance, primal_residual_tolerance, dual_residual_tolerance
+    default: 1e-07
+
+time_limit

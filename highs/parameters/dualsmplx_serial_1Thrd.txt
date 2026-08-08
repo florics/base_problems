@@ -1,0 +1,3 @@
+solver=simplex
+simplex_strategy=1
+threads=1

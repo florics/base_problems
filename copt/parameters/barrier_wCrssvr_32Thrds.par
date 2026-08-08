@@ -1,0 +1,6 @@
+Threads 32
+LpMethod 2
+Crossover 1
+BarIterLimit 2000
+
+LogLevel 3

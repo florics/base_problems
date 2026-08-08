@@ -1,0 +1,10 @@
+Method 2
+BarConvTol 1e-08
+# 1e-08 is default
+Crossover -1
+# tolerances for crossover
+FeasibilityTol 1e-06
+OptimalityTol 1e-06
+# 1e-06 is default
+
+Threads 32

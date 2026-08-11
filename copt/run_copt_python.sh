@@ -6,8 +6,10 @@
 #SBATCH --error=/scratch/htc/lmehl/master_thesis/base_problems/copt/results/job_out/sbatch_job_%A.err
 #SBATCH --partition=big
 #SBATCH --time=1:00:00
-#SBATCH --cpus-per-task=8
 #SBATCH --mem=10G
+#SBATCH --cpus-per-task=8
+#SBATCH --hint=nomultithread
+#SBATCH --cpu-freq=medium-medium:Performance
 
 #for usage at z1 cluster set http and https proxy environment variables
 export https_proxy=http://squid.zib.de:3128

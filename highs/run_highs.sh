@@ -109,18 +109,28 @@ cd $solfolder
 timestamp=$(date +%Y-%m-%d_%H-%M-%S)
 sol_file="${solfolder}/${lp_name}_${timestamp}.highs.sol"
 
-/usr/bin/time -v /scratch/htc/lmehl/setup/HiGHS/build/bin/highs $lpfile \
-    --solution_file=$sol_file --options_file $copied_prmfile \
-    2> "${solfolder}/time_run_0.log"
+/usr/bin/time -v \
+    perf stat \
+        -e cycles,instructions,task-clock,cpu-clock \
+        -- \
+        /scratch/htc/lmehl/setup/HiGHS/build/bin/highs \
+        $lpfile --solution_file=$sol_file --options_file $copied_prmfile \
+    2>&1
 
 gzip $sol_file
-echo "Run completed."
+echo "Run 0 completed."
 
 #solve 2 more times but without storing sol file
 for (( i=1; i<NUM_RUNS; i++ )); do
-    /usr/bin/time -v /scratch/htc/lmehl/setup/HiGHS/build/bin/highs $lpfile \
-        --options_file $copied_prmfile \
-        2> "${solfolder}/time_run_${i}.log"
+    /usr/bin/time -v \
+        perf stat \
+            -e cycles,instructions,task-clock,cpu-clock \
+            -- \
+            /scratch/htc/lmehl/setup/HiGHS/build/bin/highs \
+            $lpfile --options_file $copied_prmfile \
+        2>&1
         
-    echo "Run completed."
+    echo ""
+    echo "Run $i completed."
+    echo ""
 done

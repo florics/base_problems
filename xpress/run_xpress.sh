@@ -109,8 +109,11 @@ source ~/conda_init
 
 for (( i=0; i<NUM_RUNS; i++ )); do
     /usr/bin/time -v \
-        python /scratch/htc/lmehl/master_thesis/base_problems/xpress/solve_lp_w_xpress.py \
-        "$lpfile" "$solfolder" "$copied_prmfile" \
+        perf stat \
+            -e cycles,instructions,task-clock,cpu-clock \
+            -- \
+            python /scratch/htc/lmehl/master_thesis/base_problems/xpress/solve_lp_w_xpress.py \
+            "$lpfile" "$solfolder" "$copied_prmfile" \
         2>&1
 
     echo ""

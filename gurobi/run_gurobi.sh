@@ -115,10 +115,15 @@ conda activate
 
 for (( i=0; i<NUM_RUNS; i++ )); do
     /usr/bin/time -v \
-        python /scratch/htc/lmehl/master_thesis/base_problems/gurobi/solve_lp_w_gurobi.py \
-        "$lpfile" "$solfolder" "$copied_prmfile" \
-        2> "${solfolder}/time_run_${i}.log"
+        perf stat \
+            -e cycles,instructions,task-clock,cpu-clock \
+            -- \
+            python /scratch/htc/lmehl/master_thesis/base_problems/gurobi/solve_lp_w_gurobi.py \
+            "$lpfile" "$solfolder" "$copied_prmfile" \
+        2>&1
 
+    echo ""
     echo "Run $i completed."
+    echo ""
 done
 

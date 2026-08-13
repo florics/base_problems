@@ -1,0 +1,4 @@
+OUTPUTLOG = 1
+THREADS = 1
+! bit 2
+LPFLAGS = 4

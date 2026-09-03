@@ -1,0 +1,3 @@
+solver=hipo
+run_crossover=off
+threads=16

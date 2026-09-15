@@ -158,7 +158,7 @@ def solve_lp(
     optimize_error = None
 
     try:
-        model.solve()
+        model.solveLP()
     except cp.CoptError as error:
         optimize_error = error
         print("\nWARNING: COPT terminated with an exception:")

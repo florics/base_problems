@@ -100,7 +100,13 @@ def compute_primal_residual(model):
 # Main solve function
 # ===============================
 
-def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
+def solve_lp(
+    lp_path,
+    sol_folder,
+    param_file=None,
+    write_artifacts=False,
+    compute_residuals=False,
+):
 
     lp = Path(lp_path)
     if not lp.exists():
@@ -203,9 +209,7 @@ def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
     max_constr_violation = None
     max_bound_violation = None
 
-    if not write_artifacts:
-        print("\nSolution writing disabled.")
-    elif has_lp_sol:
+    if compute_residuals and has_lp_sol:
         try:
             (
                 max_constr_violation,
@@ -226,7 +230,9 @@ def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
     # Write solution
     # ===============================
 
-    if has_lp_sol:
+    if not write_artifacts:
+        print("\nSolution writing disabled.")
+    elif has_lp_sol:
         try:
             existing_sols = list(sol_folder.glob("*.sol.gz"))
 
@@ -356,10 +362,17 @@ if __name__ == "__main__":
         default=False,
         help="write the solved .sol.gz artifact (default: disabled)",
     )
+    parser.add_argument(
+        "--compute-residuals",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="compute manual primal residuals after the solve (default: disabled)",
+    )
     args = parser.parse_args()
     solve_lp(
         args.lp,
         args.sol_folder,
         args.param_file,
         write_artifacts=args.write_artifacts,
+        compute_residuals=args.compute_residuals,
     )

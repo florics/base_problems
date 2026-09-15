@@ -40,6 +40,15 @@ case "$artifact_flag" in
         ;;
 esac
 echo "artifact writing: ${artifact_flag}"
+residual_flag="${5:---no-compute-residuals}"
+case "$residual_flag" in
+    --compute-residuals|--no-compute-residuals) ;;
+    *)
+        echo "Usage: $0 <model.lp> <parameter-file> <num-runs> [--write-artifacts|--no-write-artifacts] [--compute-residuals|--no-compute-residuals]" >&2
+        exit 2
+        ;;
+esac
+echo "manual residuals: ${residual_flag}"
 
 lp_name_w_suffix=$(basename "$lpfile")
 lp_name="${lp_name_w_suffix%.lp}"
@@ -124,7 +133,7 @@ for (( i=0; i<NUM_RUNS; i++ )); do
             -e cycles,instructions,task-clock,cpu-clock \
             -- \
             python /scratch/htc/lmehl/master_thesis/base_problems/copt/solve_lp_w_copt.py \
-            "$lpfile" "$solfolder" "$copied_prmfile" "$artifact_flag" \
+            "$lpfile" "$solfolder" "$copied_prmfile" "$artifact_flag" "$residual_flag" \
         2>&1
 
     echo ""

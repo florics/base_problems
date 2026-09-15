@@ -50,7 +50,8 @@ def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
     print("Gurobi logging to     : {}".format(log_path))
 
     # --- Solve and measure times ---
-    t0 = time.time()
+    wall_start = time.perf_counter()
+    cpu_start = time.process_time()
     
     optimize_error = None
 
@@ -61,11 +62,13 @@ def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
         print("\nWARNING: Gurobi terminated with an exception:")
         print(f"  {e}\n")
 
-    t1 = time.time()
+    external_wallclock = time.perf_counter() - wall_start
+    external_cpu_time = time.process_time() - cpu_start
 
     # --- Collect results (safe access to attributes) ---
 
-    print("Wallclock time         : {:.3f} sec (external timer)".format(t1 - t0))
+    print("External Wallclock     : {:.6f} sec".format(external_wallclock))
+    print("External CPU Time      : {:.6f} sec".format(external_cpu_time))
 
     print("\n=== Gurobi Attributes ===\n")
 

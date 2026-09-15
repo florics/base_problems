@@ -183,7 +183,13 @@ def print_memory_attribute(
 # Solve routine
 # ---------------------------------------------------------------------------
 
-def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
+def solve_lp(
+    lp_path,
+    sol_folder,
+    param_file=None,
+    write_artifacts=False,
+    print_all_attributes=False,
+):
     """
     Read and solve an LP with FICO Xpress.
 
@@ -297,15 +303,16 @@ def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
     # Complete attribute and control dumps
     # -----------------------------------------------------------------------
 
-    print("\n================================")
-    print("     ALL XPRESS ATTRIBUTES      ")
-    print("================================")
-    print(problem.attributes)
+    if print_all_attributes:
+        print("\n================================")
+        print("     ALL XPRESS ATTRIBUTES      ")
+        print("================================")
+        print(problem.attributes)
 
-    print("\n================================")
-    print("       ALL XPRESS CONTROLS      ")
-    print("================================")
-    print(problem.controls)
+        print("\n================================")
+        print("       ALL XPRESS CONTROLS      ")
+        print("================================")
+        print(problem.controls)
 
     # -----------------------------------------------------------------------
     # Structured summary
@@ -688,12 +695,19 @@ if __name__ == "__main__":
         default=False,
         help="write the solved .sol.zip artifact (default: disabled)",
     )
+    parser.add_argument(
+        "--print-all-attributes",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="print complete Xpress attributes and controls (default: disabled)",
+    )
     args = parser.parse_args()
     solve_lp(
         lp_path=args.lp_file,
         sol_folder=args.solution_folder,
         param_file=args.parameter_file,
         write_artifacts=args.write_artifacts,
+        print_all_attributes=args.print_all_attributes,
     )
 
     print()

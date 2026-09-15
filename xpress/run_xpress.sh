@@ -122,7 +122,7 @@ for (( i=0; i<NUM_RUNS; i++ )); do
             -e cycles,instructions,task-clock,cpu-clock \
             -- \
             python /scratch/htc/lmehl/master_thesis/base_problems/xpress/solve_lp_w_xpress.py \
-            "$lpfile" "$solfolder" "$copied_prmfile" "$artifact_flag" \
+            "$lpfile" "$solfolder" "$copied_prmfile" "$artifact_flag" "$attribute_flag" \
         2>&1
 
     echo ""

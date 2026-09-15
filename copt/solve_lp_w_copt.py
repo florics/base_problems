@@ -10,6 +10,7 @@ quality metrics relevant to both barrier and simplex.
 """
 
 from pathlib import Path
+import argparse
 from datetime import datetime
 import time
 import sys
@@ -99,7 +100,7 @@ def compute_primal_residual(model):
 # Main solve function
 # ===============================
 
-def solve_lp(lp_path, sol_folder, param_file=None):
+def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
 
     lp = Path(lp_path)
     if not lp.exists():
@@ -202,7 +203,9 @@ def solve_lp(lp_path, sol_folder, param_file=None):
     max_constr_violation = None
     max_bound_violation = None
 
-    if has_lp_sol:
+    if not write_artifacts:
+        print("\nSolution writing disabled.")
+    elif has_lp_sol:
         try:
             (
                 max_constr_violation,
@@ -343,16 +346,20 @@ def solve_lp(lp_path, sol_folder, param_file=None):
 # ===============================
 
 if __name__ == "__main__":
-
-    if len(sys.argv) < 3:
-        print(
-            "Usage: python solve_lp_with_copt.py "
-            "model.lp /path/to/solutions [param_file]"
-        )
-        sys.exit(1)
-
-    lp = sys.argv[1]
-    sol_folder = sys.argv[2]
-    param_file = sys.argv[3] if len(sys.argv) >= 4 else None
-
-    solve_lp(lp, sol_folder, param_file)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("lp")
+    parser.add_argument("sol_folder")
+    parser.add_argument("param_file", nargs="?")
+    parser.add_argument(
+        "--write-artifacts",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="write the solved .sol.gz artifact (default: disabled)",
+    )
+    args = parser.parse_args()
+    solve_lp(
+        args.lp,
+        args.sol_folder,
+        args.param_file,
+        write_artifacts=args.write_artifacts,
+    )

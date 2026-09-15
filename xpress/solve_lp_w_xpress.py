@@ -23,6 +23,7 @@ created by Xpress.
 """
 
 from pathlib import Path
+import argparse
 from datetime import datetime
 import time
 import sys
@@ -182,7 +183,7 @@ def print_memory_attribute(
 # Solve routine
 # ---------------------------------------------------------------------------
 
-def solve_lp(lp_path, sol_folder, param_file=None):
+def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
     """
     Read and solve an LP with FICO Xpress.
 
@@ -583,7 +584,9 @@ def solve_lp(lp_path, sol_folder, param_file=None):
         and solution_status != 0
     )
 
-    if solution_exists:
+    if not write_artifacts:
+        print("\nSolution writing disabled.")
+    elif solution_exists:
         try:
             existing_solutions = list(
                 solution_folder.glob("*.sol.zip")
@@ -675,26 +678,22 @@ def solve_lp(lp_path, sol_folder, param_file=None):
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-
-    if len(sys.argv) < 3:
-        print(
-            "Usage: python solve_lp_w_xpress.py "
-            "model.lp /path/to/solutions [param_file]"
-        )
-        sys.exit(1)
-
-    lp_file = sys.argv[1]
-    solution_folder = sys.argv[2]
-    parameter_file = (
-        sys.argv[3]
-        if len(sys.argv) >= 4
-        else None
+    parser = argparse.ArgumentParser()
+    parser.add_argument("lp_file")
+    parser.add_argument("solution_folder")
+    parser.add_argument("parameter_file", nargs="?")
+    parser.add_argument(
+        "--write-artifacts",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="write the solved .sol.zip artifact (default: disabled)",
     )
-
+    args = parser.parse_args()
     solve_lp(
-        lp_path=lp_file,
-        sol_folder=solution_folder,
-        param_file=parameter_file,
+        lp_path=args.lp_file,
+        sol_folder=args.solution_folder,
+        param_file=args.parameter_file,
+        write_artifacts=args.write_artifacts,
     )
 
     print()

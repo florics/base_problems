@@ -25,6 +25,15 @@ echo "parameters $prmfile"
 
 NUM_RUNS="$3"
 echo "NUM_RUNS = ${NUM_RUNS}"
+artifact_flag="${4:---no-write-artifacts}"
+case "$artifact_flag" in
+    --write-artifacts|--no-write-artifacts) ;;
+    *)
+        echo "Usage: $0 <model.lp> <parameter-file> <num-runs> [--write-artifacts|--no-write-artifacts]" >&2
+        exit 2
+        ;;
+esac
+echo "artifact writing: ${artifact_flag}"
 
 lp_name_w_suffix=$(basename "$lpfile")
 lp_name="${lp_name_w_suffix%.lp}"
@@ -105,31 +114,26 @@ conda activate
 
 cd $solfolder
 
-#solve once and store the sol file
-timestamp=$(date +%Y-%m-%d_%H-%M-%S)
-sol_file="${solfolder}/${lp_name}_${timestamp}.highs.sol"
+for (( i=0; i<NUM_RUNS; i++ )); do
+    highs_args=("$lpfile" --options_file "$copied_prmfile")
+    if [ "$artifact_flag" = "--write-artifacts" ] && [ "$i" -eq 0 ]; then
+        timestamp=$(date +%Y-%m-%d_%H-%M-%S)
+        sol_file="${solfolder}/${lp_name}_${timestamp}_run_${i}.highs.sol"
+        highs_args+=("--solution_file=$sol_file")
+    fi
 
-/usr/bin/time -v \
-    perf stat \
-        -e cycles,instructions,task-clock,cpu-clock \
-        -- \
-        /scratch/htc/lmehl/setup/HiGHS/build/bin/highs \
-        $lpfile --solution_file=$sol_file --options_file $copied_prmfile \
-    2>&1
-
-gzip $sol_file
-echo "Run 0 completed."
-
-#solve 2 more times but without storing sol file
-for (( i=1; i<NUM_RUNS; i++ )); do
     /usr/bin/time -v \
         perf stat \
             -e cycles,instructions,task-clock,cpu-clock \
             -- \
             /scratch/htc/lmehl/setup/HiGHS/build/bin/highs \
-            $lpfile --options_file $copied_prmfile \
+            "${highs_args[@]}" \
         2>&1
-        
+
+    if [ "$artifact_flag" = "--write-artifacts" ] && [ "$i" -eq 0 ]; then
+        gzip "$sol_file"
+    fi
+
     echo ""
     echo "Run $i completed."
     echo ""

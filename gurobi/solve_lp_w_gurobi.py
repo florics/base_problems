@@ -13,6 +13,7 @@ This script:
  - writes a timestamped .sol file (and prints a short summary)
 """
 from pathlib import Path
+import argparse
 from datetime import datetime
 import time
 import sys
@@ -21,7 +22,7 @@ import os
 import gurobipy as gp
 from gurobipy import GRB
 
-def solve_lp(lp_path, sol_folder, param_file=None):
+def solve_lp(lp_path, sol_folder, param_file=None, write_artifacts=False):
     lp = Path(lp_path)
     if not lp.exists():
         raise FileNotFoundError("LP file not found: {}".format(lp))
@@ -114,7 +115,9 @@ def solve_lp(lp_path, sol_folder, param_file=None):
         except (gp.GurobiError, AttributeError):
             print(name, "not available")
 
-    if model.SolCount > 0:
+    if not write_artifacts:
+        print("Solution writing disabled.")
+    elif model.SolCount > 0:
         try:
             existing_sols = list(Path(sol_folder).glob("*.sol.gz"))
             if existing_sols:
@@ -131,12 +134,20 @@ def solve_lp(lp_path, sol_folder, param_file=None):
         print("No solution available; skipping solution write.")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: python solve_lp_with_gurobi.py model.lp /path/to/solutions [param_file]")
-        sys.exit(1)
-
-    lp = sys.argv[1]
-    sol_folder = sys.argv[2]
-    param_file = sys.argv[3] if len(sys.argv) >= 4 else None
-
-    solve_lp(lp, sol_folder, param_file)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("lp")
+    parser.add_argument("sol_folder")
+    parser.add_argument("param_file", nargs="?")
+    parser.add_argument(
+        "--write-artifacts",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="write the solved .sol.gz artifact (default: disabled)",
+    )
+    args = parser.parse_args()
+    solve_lp(
+        args.lp,
+        args.sol_folder,
+        args.param_file,
+        write_artifacts=args.write_artifacts,
+    )

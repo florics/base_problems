@@ -35,6 +35,15 @@ echo "parameters $prmfile"
 
 NUM_RUNS="$3"
 echo "NUM_RUNS = ${NUM_RUNS}"
+artifact_flag="${4:---no-write-artifacts}"
+case "$artifact_flag" in
+    --write-artifacts|--no-write-artifacts) ;;
+    *)
+        echo "Usage: $0 <model.lp> <parameter-file> <num-runs> [--write-artifacts|--no-write-artifacts]" >&2
+        exit 2
+        ;;
+esac
+echo "artifact writing: ${artifact_flag}"
 
 lp_name_w_suffix=$(basename "$lpfile")
 lp_name="${lp_name_w_suffix%.lp}"
@@ -119,11 +128,10 @@ for (( i=0; i<NUM_RUNS; i++ )); do
             -e cycles,instructions,task-clock,cpu-clock \
             -- \
             python /scratch/htc/lmehl/master_thesis/base_problems/gurobi/solve_lp_w_gurobi.py \
-            "$lpfile" "$solfolder" "$copied_prmfile" \
+            "$lpfile" "$solfolder" "$copied_prmfile" "$artifact_flag" \
         2>&1
 
     echo ""
     echo "Run $i completed."
     echo ""
 done
-

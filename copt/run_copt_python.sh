@@ -8,6 +8,7 @@
 #SBATCH --time=1:00:00
 #SBATCH --mem=10G
 #SBATCH --cpus-per-task=8
+#SBATCH --constraint=Gold6338
 #SBATCH --hint=nomultithread
 #SBATCH --cpu-freq=medium-medium:Performance
 

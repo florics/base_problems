@@ -115,24 +115,20 @@ conda activate
 cd $solfolder
 
 for (( i=0; i<NUM_RUNS; i++ )); do
-    highs_args=("$lpfile" --options_file "$copied_prmfile")
+    echo "Measured trial scope: fresh process; LP/parameter setup; solve; result collection; disposal."
+    run_artifact_flag="--no-write-artifacts"
     if [ "$artifact_flag" = "--write-artifacts" ] && [ "$i" -eq 0 ]; then
-        timestamp=$(date +%Y-%m-%d_%H-%M-%S)
-        sol_file="${solfolder}/${lp_name}_${timestamp}_run_${i}.highs.sol"
-        highs_args+=("--solution_file=$sol_file")
+        run_artifact_flag="--write-artifacts"
     fi
 
     /usr/bin/time -v \
         perf stat \
             -e cycles,instructions,task-clock,cpu-clock \
             -- \
-            /scratch/htc/lmehl/setup/HiGHS/build/bin/highs \
-            "${highs_args[@]}" \
+            python /scratch/htc/lmehl/master_thesis/base_problems/highs/solve_lp_w_highs.py \
+            "$lpfile" "$solfolder" "$copied_prmfile" \
+            --run-index "$i" "$run_artifact_flag" \
         2>&1
-
-    if [ "$artifact_flag" = "--write-artifacts" ] && [ "$i" -eq 0 ]; then
-        gzip "$sol_file"
-    fi
 
     echo ""
     echo "Run $i completed."

@@ -123,6 +123,7 @@ source ~/conda_init
 conda activate
 
 for (( i=0; i<NUM_RUNS; i++ )); do
+    echo "Measured trial scope: fresh process; LP/parameter setup; solve; result collection; disposal."
     /usr/bin/time -v \
         perf stat \
             -e cycles,instructions,task-clock,cpu-clock \

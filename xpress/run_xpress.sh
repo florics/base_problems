@@ -39,6 +39,15 @@ case "$artifact_flag" in
         ;;
 esac
 echo "artifact writing: ${artifact_flag}"
+attribute_flag="${5:---no-print-all-attributes}"
+case "$attribute_flag" in
+    --print-all-attributes|--no-print-all-attributes) ;;
+    *)
+        echo "Usage: $0 <model.lp> <parameter-file> <num-runs> [--write-artifacts|--no-write-artifacts] [--print-all-attributes|--no-print-all-attributes]" >&2
+        exit 2
+        ;;
+esac
+echo "complete Xpress diagnostic dumps: ${attribute_flag}"
 
 lp_name_w_suffix=$(basename "$lpfile")
 lp_name="${lp_name_w_suffix%.lp}"

@@ -34,7 +34,19 @@ def main():
 
     args.result_dir.mkdir(parents=True, exist_ok=True)
     highs = highspy.Highs()
-    require_ok(highs.readModel(str(args.lp_file)), f"readModel({args.lp_file})")
+    model_path = args.lp_file
+    decompressed_path = None
+    if args.lp_file.suffix == ".gz":
+        # This HiGHS build lacks zlib support, so materialize gzip input locally.
+        decompressed_path = args.result_dir / args.lp_file.with_suffix("").name
+        with gzip.open(args.lp_file, "rb") as source, decompressed_path.open("wb") as destination:
+            shutil.copyfileobj(source, destination)
+        model_path = decompressed_path
+    try:
+        require_ok(highs.readModel(str(model_path)), f"readModel({args.lp_file})")
+    finally:
+        if decompressed_path is not None:
+            decompressed_path.unlink(missing_ok=True)
     require_ok(highs.readOptions(str(args.options_file)), f"readOptions({args.options_file})")
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")

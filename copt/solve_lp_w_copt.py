@@ -175,13 +175,8 @@ def solve_lp(
     # Collect solver information
     # ===============================
 
-    # Unified solution attributes recommended by newer COPT versions.
-    status = safe_get_attr(model, "Status")
-    has_sol = bool(safe_get_attr(model, "HasSol", 0))
-    objval = safe_get_attr(model, "ObjVal") if has_sol else None
-
-    # LP-specific attributes. These are retained for compatibility with older
-    # COPT versions and for explicitly reporting LP information.
+    # solveLP() produces LP-specific results. Generic solution attributes are
+    # not populated by COPT for this API path.
     lp_status = safe_get_attr(model, "LpStatus")
     has_lp_sol = bool(safe_get_attr(model, "HasLpSol", 0))
     lp_objval = (
@@ -290,11 +285,8 @@ def solve_lp(
     print("==============================")
 
     print(f"Model                : {lp.name}")
-    print(f"Status               : {status}")
     print(f"LP Status            : {lp_status}")
-    print(f"Has Solution         : {has_sol}")
     print(f"Has LP Solution      : {has_lp_sol}")
-    print(f"Objective            : {objval}")
     print(f"LP Objective         : {lp_objval}")
 
     print("\n--- Performance ---")

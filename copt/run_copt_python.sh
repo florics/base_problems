@@ -125,7 +125,6 @@ lscpu
 echo "------ (end of hardware info) ------"
 
 source ~/conda_init
-conda activate copt
 
 for (( i=0; i<NUM_RUNS; i++ )); do
     echo "Measured trial scope: fresh process; LP/parameter setup; solve; result collection; disposal."
